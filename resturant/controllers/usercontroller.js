@@ -1,7 +1,7 @@
-// restaurant/controllers/userController.js
 const client = require('../database/connection');
+
 const getAllUsers = (req, res) => {
-    client.query('SELECT * FROM users', (err, result) => {
+    client.query('SELECT id, firstname, lastname, email, location, type FROM users', (err, result) => {
         if (!err) {
             res.send(result.rows);
         } else {
@@ -11,7 +11,7 @@ const getAllUsers = (req, res) => {
 };
 
 const getUserById = (req, res) => {
-    client.query(`SELECT * FROM users WHERE id=${req.params.id}`, (err, result) => {
+    client.query(`SELECT id, firstname, lastname, email, location, type FROM users WHERE id=${req.params.id}`, (err, result) => {
         if (!err) {
             res.send(result.rows);
         } else {
@@ -21,8 +21,8 @@ const getUserById = (req, res) => {
 };
 const createUser = (req, res) => {
     const user = req.body;
-    const insertQuery = `INSERT INTO users(id, firstname, lastname, location) 
-                         VALUES(${user.id}, '${user.firstname}', '${user.lastname}', '${user.location}')`;
+    const insertQuery = `INSERT INTO public.users(firstname, lastname, email, location, type, password) 
+                         VALUES('${user.firstname}', '${user.lastname}', '${user.email}', '${user.location}', '${user.type}', '${user.password}')`;
 
     client.query(insertQuery, (err, result) => {
         if (!err) {
@@ -33,12 +33,15 @@ const createUser = (req, res) => {
     });
 };
 
+
 const updateUser = (req, res) => {
     const user = req.body;
     const updateQuery = `UPDATE users
                          SET firstname = '${user.firstname}',
                          lastname = '${user.lastname}',
-                         location = '${user.location}'
+                         email = '${user.email}',
+                         location = '${user.location}',
+                         type = '${user.type}'
                          WHERE id = ${user.id}`;
 
     client.query(updateQuery, (err, result) => {
